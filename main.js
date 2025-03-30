@@ -3,6 +3,7 @@
 var svg = document.getElementById("pcb");
 var gridSpacing = 6;
 var lineWidth = 3;
+var lineColor = "rgb(123, 169, 115)"
 
 //** Use viewport dimensions **//
 var width = Math.floor(window.innerWidth / gridSpacing);
@@ -19,7 +20,7 @@ var renderLine = function(x1, y1, x2, y2) {
     line.setAttribute("y1", (y1 + 0.5) * gridSpacing);
     line.setAttribute("x2", (x2 + 0.5) * gridSpacing);
     line.setAttribute("y2", (y2 + 0.5) * gridSpacing);
-    line.setAttribute("stroke", "#4a4");
+    line.setAttribute("stroke", lineColor);
     line.setAttribute("stroke-width", lineWidth);
     line.setAttribute("stroke-linecap", "round");
     svg.appendChild(line);
