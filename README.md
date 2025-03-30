@@ -16,7 +16,7 @@ The tool automates the generation of PCB circuit layouts, ensuring efficient des
 
 ![Fractal Growth on Zoom Out](assets/branch1_zoomedOut_Fractal.png)
 
-### No-Chips Version (no-chips branch)
+### No-Chips Version (no-chip-version branch)
 ![No-Chips Version Example 1](assets/branch2_blue.png)
 ![No-Chips Version Example 2](assets/branch2_green.png)
 - Designed for simpler PCB layouts.
