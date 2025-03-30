@@ -4,6 +4,7 @@ var svg = document.getElementById("pcb");
 //* PCB Circuit Parameters *//
 var gridSpacing = 10;
 var lineWidth = 5;
+var lineColor = "rgb(123, 169, 115"
 
 var width = Math.floor(window.innerWidth / gridSpacing);
 var height = Math.floor(document.body.scrollHeight / gridSpacing) * 1.5;
@@ -116,7 +117,7 @@ var renderLine = function(x1, y1, x2, y2) {
     line.setAttribute("y1", (y1 + 0.5) * gridSpacing);
     line.setAttribute("x2", (x2 + 0.5) * gridSpacing);
     line.setAttribute("y2", (y2 + 0.5) * gridSpacing);
-    line.setAttribute("stroke", "#4a4");
+    line.setAttribute("stroke", lineColor);
     line.setAttribute("stroke-width", lineWidth);
     line.setAttribute("stroke-linecap", "round");
     svg.appendChild(line);
