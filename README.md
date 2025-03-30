@@ -5,8 +5,6 @@ It's a from-scratch JS project for generating circuit designs for Printed Circui
 - **Main Version (main branch)**: This version includes support for chips and more complex circuit designs.
 - **Simpler Version (no-chips branch)**: A streamlined version that excludes chips for simpler circuits.
 
-The tool automates the generation of PCB circuit layouts, ensuring efficient design workflows for electronics projects.
-
 ## </> Features
 ### Main Version (main branch)
 ![Main Version Example 1](assets/branch1_blue.png)
