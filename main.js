@@ -4,7 +4,7 @@ var svg = document.getElementById("pcb");
 //* PCB Circuit Parameters *//
 var gridSpacing = 10;
 var lineWidth = 5;
-var lineColor = "rgb(123, 169, 115"
+var lineColor = "rgb(123, 169, 115)"
 
 var width = Math.floor(window.innerWidth / gridSpacing);
 var height = Math.floor(document.body.scrollHeight / gridSpacing) * 1.5;
