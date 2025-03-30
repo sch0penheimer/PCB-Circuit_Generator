@@ -10,15 +10,29 @@ The tool automates the generation of PCB circuit layouts, ensuring efficient des
 ## </> Features
 ### Main Version (main branch)
 ![Main Version Example 1](assets/branch1_blue.png)
-![Main Version Example 2](assets/branch1_green_zoomOut.png)
+|:-----------------------------:|
+| Main Version Rendered Example |
+
+![Main Version Example 2](assets/branch1_green_zoomedOut.png)
+|:--------------------------------------------:|
+| Main Version Rendered Example x2 (Green PCB) |
+
 - Supports IC (integrated circuit) chips in the PCB design.
 - Customizable component parameters.
 
 ![Fractal Growth on Zoom Out](assets/branch1_zoomedOut_Fractal.png)
+|:--------------------------------------------:|
+| Fractal Growth on ZommOut Example |
 
 ### No-Chips Version (no-chip-version branch)
 ![No-Chips Version Example 1](assets/branch2_blue.png)
+|:--------------------------------:|
+| No-Chip Version Rendered Example |
+
 ![No-Chips Version Example 2](assets/branch2_green.png)
+|:-----------------------------------------------:|
+| No-Chip Version Rendered Example x2 (Green PCB) |
+
 - Designed for simpler PCB layouts.
 - Excludes support for IC chips.
 - Provides optimized routing for minimal component designs.
