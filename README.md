@@ -1,7 +1,5 @@
 # PCB Circuit Generator
 
-It's a from-scratch JS project for generating circuit designs for Printed Circuit Boards (PCBs). The project provides two versions:
-
 - **Main Version (main branch)**: This version includes support for chips and more complex circuit designs.
 - **Simpler Version (no-chips branch)**: A streamlined version that excludes chips for simpler circuits.
 
