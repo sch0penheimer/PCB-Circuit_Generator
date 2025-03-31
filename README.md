@@ -1,5 +1,5 @@
 # PCB Circuit Generator
-
+A JS-based, procedural, Printed Circuit Board (PCB) layout rendering engine.
 - **Main Version (main branch)**: This version includes support for chips and more complex circuit designs.
 - **Simpler Version (no-chips branch)**: A streamlined version that excludes chips for simpler circuits.
 
