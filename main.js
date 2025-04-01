@@ -4,59 +4,79 @@ var svg = document.getElementById("pcb");
 //* PCB Circuit Parameters *//
 var gridSpacing = 10;
 var lineWidth = 5;
-var lineColor = "rgb(123, 169, 115)"
+var lineColor = "rgb(123, 169, 115)";
 
-var width = Math.floor(window.innerWidth / gridSpacing);
-var height = Math.floor(document.body.scrollHeight / gridSpacing) * 1.5;
-svg.setAttribute('width', window.innerWidth);
-svg.setAttribute('height', height * gridSpacing);
+// Calculate dimensions more safely
+var width = Math.max(1, Math.min(500, Math.floor(window.innerWidth / gridSpacing)));
+var height = Math.max(1, Math.min(500, Math.floor(document.body.scrollHeight / gridSpacing) * 1.5));
 
+// Initialize arrays safely
 var gridState = [];
 var obstacleMap = [];
 
 for (var x = 0; x < width; x++) {
-    gridState.push(Array(height).fill(false));
-    obstacleMap.push(Array(height).fill(false));
+    gridState[x] = [];
+    obstacleMap[x] = [];
+    for (var y = 0; y < height; y++) {
+        gridState[x][y] = false;
+        obstacleMap[x][y] = false;
+    }
 }
 
+svg.setAttribute('width', window.innerWidth);
+svg.setAttribute('height', height * gridSpacing);
+
+
+var allLines = []; // Store all line elements for animation
+var animationPhase = 0; // 0 = growing, 1 = shrinking
+var animationSpeed = 10; // How many lines to animate per frame
+var visibleLines = []; // Track currently visible lines
 var borderPads = [];
+
+// Animation variables
+var isAnimating = false;
+var animationInterval;
 
 /**
  * Mark obstacles on the grid
  * and create connection points around them.
  */
+// Modified markObstacles function
 function markObstacles() {
     const obstacles = document.querySelectorAll('.pcb-obstacle');
     obstacles.forEach(obstacle => {
         const rect = obstacle.getBoundingClientRect();
-        const startX = Math.floor(rect.left / gridSpacing);
-        const startY = Math.floor(rect.top / gridSpacing);
-        const endX = Math.floor(rect.right / gridSpacing);
-        const endY = Math.floor(rect.bottom / gridSpacing);
-        //** Marks the obstacle area **//
-        for (let x = Math.max(0, startX - 5); x <= Math.min(width-1, endX + 5); x++) {
-            for (let y = Math.max(0, startY - 5); y <= Math.min(height-1, endY + 5); y++) {
-                obstacleMap[x][y] = true;
-                gridState[x][y] = true;
+        const startX = Math.max(0, Math.floor(rect.left / gridSpacing));
+        const startY = Math.max(0, Math.floor(rect.top / gridSpacing));
+        const endX = Math.min(width-1, Math.floor(rect.right / gridSpacing));
+        const endY = Math.min(height-1, Math.floor(rect.bottom / gridSpacing));
+        
+        // Ensure we're within bounds
+        for (let x = startX; x <= endX; x++) {
+            for (let y = startY; y <= endY; y++) {
+                if (x >= 0 && x < width && y >= 0 && y < height) {
+                    obstacleMap[x][y] = true;
+                    gridState[x][y] = true;
+                }
             }
         }
         
         const borderPoints = [];
         //** Top border (direction: up) **//
-        for (let x = Math.max(0, startX); x <= Math.min(width-1, endX-1); x++) {
+        for (let x = Math.max(0, startX); x <= Math.min(width-1, endX); x++) {
             if (startY - 1 >= 0) borderPoints.push({x: x, y: startY - 1, dir: 'up'});
         }
         //** Bottom border (direction: down) **//
-        for (let x = Math.max(0, startX); x <= Math.min(width-1, endX-1); x++) {
-            if (endY < height) borderPoints.push({x: x, y: endY, dir: 'down'});
+        for (let x = Math.max(0, startX); x <= Math.min(width-1, endX); x++) {
+            if (endY + 1 < height) borderPoints.push({x: x, y: endY + 1, dir: 'down'});
         }
         //** Left border (direction: left) **//
-        for (let y = Math.max(0, startY); y <= Math.min(height-1, endY-1); y++) {
+        for (let y = Math.max(0, startY); y <= Math.min(height-1, endY); y++) {
             if (startX - 1 >= 0) borderPoints.push({x: startX - 1, y: y, dir: 'left'});
         }
         //** Right border (direction: right) **//
-        for (let y = Math.max(0, startY); y <= Math.min(height-1, endY-1); y++) {
-            if (endX < width) borderPoints.push({x: endX, y: y, dir: 'right'});
+        for (let y = Math.max(0, startY); y <= Math.min(height-1, endY); y++) {
+            if (endX + 1 < width) borderPoints.push({x: endX + 1, y: y, dir: 'right'});
         }
         
         borderPoints.forEach(point => {
@@ -120,7 +140,9 @@ var renderLine = function(x1, y1, x2, y2) {
     line.setAttribute("stroke", lineColor);
     line.setAttribute("stroke-width", lineWidth);
     line.setAttribute("stroke-linecap", "round");
+    line.style.opacity = "0"; // Start invisible
     svg.appendChild(line);
+    allLines.push(line); // Store for animation
 }
 
 /**
@@ -182,6 +204,52 @@ var doLine = function(x0, y0, x1, y1) {
     if (deadEnd) renderPad(x1, y1);
 }
 
+// Animation functions
+function startAnimation() {
+    if (isAnimating) return;
+    isAnimating = true;
+    visibleLines = [];
+    animationPhase = 0;
+    
+    // Clear any existing interval
+    if (animationInterval) {
+        clearInterval(animationInterval);
+    }
+    
+    animationInterval = setInterval(animateCircuit, 50);
+}
+
+function animateCircuit() {
+    if (animationPhase === 0) {
+        // Growing phase - show lines
+        for (let i = 0; i < animationSpeed; i++) {
+            if (visibleLines.length < allLines.length) {
+                const line = allLines[visibleLines.length];
+                line.style.opacity = "1";
+                line.style.transition = "opacity 0.3s ease-in-out";
+                visibleLines.push(line);
+            } else {
+                // Switch to shrinking phase
+                animationPhase = 1;
+                break;
+            }
+        }
+    } else {
+        // Shrinking phase - hide lines
+        for (let i = 0; i < animationSpeed; i++) {
+            if (visibleLines.length > 0) {
+                const line = visibleLines.pop();
+                line.style.opacity = "0";
+                line.style.transition = "opacity 0.3s ease-in-out";
+            } else {
+                // Switch back to growing phase
+                animationPhase = 0;
+                break;
+            }
+        }
+    }
+}
+
 //** Window resize handling **//
 window.addEventListener('resize', function() {
     while (svg.firstChild) {
@@ -195,6 +263,8 @@ window.addEventListener('resize', function() {
     
     gridState = [];
     obstacleMap = [];
+    allLines = [];
+    visibleLines = [];
     for (var x = 0; x < width; x++) {
         gridState.push(Array(height).fill(false));
         obstacleMap.push(Array(height).fill(false));
@@ -209,6 +279,8 @@ window.addEventListener('resize', function() {
  */
 function generateCircuit() {
     borderPads = [];
+    allLines = [];
+    visibleLines = [];
     //** Mark Obstacle Divs first **//
     markObstacles();
     
@@ -252,6 +324,9 @@ function generateCircuit() {
     }
 
     connectBorderPads();
+    
+    // Start the animation after a short delay
+    setTimeout(startAnimation, 1000);
 }
 
 //** Initialize **//
